@@ -1,0 +1,5 @@
+version: '2'
+services:
+  react-kaban:
+    build: .
+    image: demifire/react-kaban:local
