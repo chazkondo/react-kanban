@@ -16,6 +16,8 @@ RUN npm install
 # Add the rest of the project files(most builds will start from here based on cache)
 COPY . .
 
+RUN npm run build
+
 # Start the node application as you normally would
 CMD ["node", "./server/server.js"]
 
