@@ -11,8 +11,7 @@ COPY . .
 RUN npm run build
 
 # Copy startup script
-COPY start.sh .
-RUN chmod +x start.sh
+COPY startup.js .
 
-# Use startup script instead of direct node command
-CMD ["./start.sh"]
+# Use Node startup script
+CMD ["node", "startup.js"]
