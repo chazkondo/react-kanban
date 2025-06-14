@@ -18,6 +18,12 @@ COPY . .
 
 RUN npm run build
 
+# Add this after RUN npm run build
+RUN npx knex --knexfile ./server/knexfile.js migrate:latest
+RUN npx knex --knexfile ./server/knexfile.js seed:run
+
+
 # Start the node application as you normally would
 CMD ["node", "./server/server.js"]
+
 
