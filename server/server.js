@@ -1,5 +1,3 @@
-// Need to add methods to catch errors, and undo action to cache
-
 const express = require('express');
 const app = express()
 const PORT = process.env.EXPRESS_CONTAINER_PORT || 4000 
@@ -8,13 +6,13 @@ const Items = require('./db/models/Items.js');
 const bodyParser = require('body-parser')
 
 app.use(bodyParser.json())
-
 app.use(express.static(path.join(__dirname, '../build')))
 
-app.get('/', () => {
+app.get('/', (req, res) => {
   res.sendFile('../build/index.html')
 })
 
+// ✅ KEEP: Read-only endpoint
 app.get('/items', (req, res) => {
   Items
     .fetchAll()
@@ -26,103 +24,57 @@ app.get('/items', (req, res) => {
     })
 })
 
+// ❌ DISABLED: Write operations for demo security
+/*
 app.post( '/', (req, res) => {
-  const newItem = {
-    task: req.body.task,
-    description: req.body.description,
-    priority: req.body.priority,
-    type: req.body.type,
-    sortingid: req.body.sortingid
-  }
-
-  Items
-    .forge(newItem)
-    .save()
-    .then((data) => {
-      return Items.fetchAll()
-    })
-    .then ( newItems => {
-      res.json(newItems.serialize())
-    })
-    .catch(err => {
-      console.log('error', err)
-      res.json(err)
-    })
+  // ADD ITEM - Disabled for portfolio demo
+  res.status(405).json({ 
+    message: "Demo mode: Adding items disabled for portfolio security",
+    action: "add"
+  });
 })
 
 app.put('/save', (req, res) => {
-
-  let cache = req.body.currentCache;
-  let updateSort = {};
-  let id;
-  
-  for ( let i = 0; i < cache.length; i++ ) {
-    id = cache[i].id;
-    updateSort.sortingid = i+1;
-
-    Items
-      .where({id})
-      .fetch()
-      .then(update => {
-        update.save(updateSort)
-      })
-      .catch(err => {
-        console.log('error', err)
-        res.json(err)
-      })
-  }
-  
+  // SAVE/REORDER - Disabled for portfolio demo
+  res.status(405).json({ 
+    message: "Demo mode: Saving disabled for portfolio security",
+    action: "save"
+  });
 })
 
 app.delete( '/:id', (req, res) => {
-const id = req.body.item.id;
-
-let newItem = {};
-newItem.type = false;
-
-  Items
-    .where({ id })
-    .fetch()
-    .then(update => {
-    return update.save(newItem)
-    })
-    .then ( newItems => {
-      res.json(newItems.serialize())
-    })
-    .catch(err => {
-      res.json(err);
-    })
+  // DELETE ITEM - Disabled for portfolio demo
+  res.status(405).json({ 
+    message: "Demo mode: Deleting items disabled for portfolio security",
+    action: "delete"
+  });
 })
 
 app.put( '/:id', (req, res) => {
+  // EDIT ITEM - Disabled for portfolio demo
+  res.status(405).json({ 
+    message: "Demo mode: Editing items disabled for portfolio security",
+    action: "edit"
+  });
+})
+*/
 
-  const id = parseInt(req.body.item.id);
-
-  const newItem = {
-    task: req.body.item.task,
-    description: req.body.item.description,
-    priority: req.body.item.priority,
-    type: req.body.item.type
-  }
-
-  Items
-  .where({id})
-  .fetch()
-  .then(update => {
-    return update.save(newItem)
-  })
-  .then((data) => {
-    return Items.fetchAll()
-  })
-  .then ( newItems => {
-    res.json(newItems.serialize())
-  })
-  .catch(err => {
-    console.log('error', err)
-    res.json(err)
-  })
+// 📖 Demo info endpoint
+app.get('/demo-info', (req, res) => {
+  res.json({
+    message: "Portfolio Demo - Read Only Mode",
+    features: [
+      "Drag & drop visualization (client-side only)",
+      "React + Redux architecture", 
+      "Docker containerization",
+      "PostgreSQL database",
+      "Express.js API"
+    ],
+    note: "Write operations disabled for security. Full functionality available in development."
+  });
 })
 
 app.listen(PORT, () => {
-  console.log(`Listening on ${PORT}...`)
+  console.log(`🚀 Portfolio Kanban API listening on ${PORT}...`)
+  console.log(`📖 Demo mode: Read-only for security`)
 })
